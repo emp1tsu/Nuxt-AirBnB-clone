@@ -29,6 +29,12 @@
 
 <script>
 import homes from "~/data/homes";
+if (process.client) {
+  window.initMap = function() {
+    console.log("text");
+  };
+}
+
 export default {
   head() {
     return {
@@ -36,9 +42,14 @@ export default {
       script: [
         {
           src:
-            "https://maps.googleapis.com/maps/api/js?key=AIzaSyDPpI4HRbEdTahtsvMJd-VUJKYDSkK4q80&libraries=places",
+            "https://maps.googleapis.com/maps/api/js?key=AIzaSyDPpI4HRbEdTahtsvMJd-VUJKYDSkK4q80&libraries=places&callback=initMap",
           hid: "map",
           defer: true,
+          skip: process.client && window.mapLoaded,
+        },
+        {
+          innerHTML: "window.initMap = function(){ window.mapLoaded = true}",
+          hid: "map-init",
         },
       ],
     };
