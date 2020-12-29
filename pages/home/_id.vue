@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import homes from "~/data/homes";
 if (process.client) {
   window.initMap = function() {
     console.log("text");
@@ -41,11 +40,6 @@ export default {
       title: this.home.title,
     };
   },
-  data() {
-    return {
-      home: {},
-    };
-  },
   methods: {},
   mounted() {
     this.$maps.showMap(
@@ -54,9 +48,17 @@ export default {
       this.home._geoloc.lng
     );
   },
-  created() {
-    const home = homes.find((home) => home.objectID === this.$route.params.id);
-    this.home = home;
+  async asyncData({ params, $dataApi, error }) {
+    const response = await $dataApi.getHome(params.id);
+    if (!response.ok)
+      return error({
+        statusCode: response.status,
+        message: response.statusText,
+      });
+
+    return {
+      home: response.json,
+    };
   },
 };
 </script>
