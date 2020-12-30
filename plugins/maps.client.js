@@ -1,4 +1,4 @@
-export default function(context, inject) {
+export default function (context, inject) {
   let mapLoaded = false;
   let mapWaiting = null;
 
@@ -10,7 +10,7 @@ export default function(context, inject) {
   function addScript() {
     const script = document.createElement("script");
     script.src =
-      "https://maps.googleapis.com/maps/api/js?key=AIzaSyDPpI4HRbEdTahtsvMJd-VUJKYDSkK4q80&libraries=places&callback=initMap";
+      "https://maps.googleapis.com/maps/api/js?key=AIzaSyADbA_W_yvvP0bkK67F0qIikmnYS1zzqHE&libraries=places&callback=initMap";
     script.async = true;
     window.initMap = initMap;
     document.head.appendChild(script);

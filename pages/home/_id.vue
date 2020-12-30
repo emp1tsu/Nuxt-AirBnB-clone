@@ -24,10 +24,17 @@
     {{ home.bathrooms }} bath<br />
     {{ home.description }}
     <div style="height:800px;width:800px" ref="map"></div>
+    <div v-for="review in reviews" :key="review.objectID">
+      <img :src="review.reviewer.image" /><br />
+      {{ review.reviewer.name }}<br />
+      {{ formatDate(review.date) }} <br />
+      <short-text :text="review.comment" :target="150" /><br />
+    </div>
   </div>
 </template>
 
 <script>
+import ShortText from "../../components/ShortText.vue";
 if (process.client) {
   window.initMap = function() {
     console.log("text");
@@ -35,6 +42,7 @@ if (process.client) {
 }
 
 export default {
+  components: { ShortText },
   head() {
     return {
       title: this.home.title,
@@ -49,16 +57,33 @@ export default {
     );
   },
   async asyncData({ params, $dataApi, error }) {
-    const response = await $dataApi.getHome(params.id);
-    if (!response.ok)
+    const homeResponse = await $dataApi.getHome(params.id);
+    if (!homeResponse.ok)
       return error({
-        statusCode: response.status,
-        message: response.statusText,
+        statusCode: homeResponse.status,
+        message: homeResponse.statusText,
+      });
+
+    const reviewResponse = await $dataApi.getReviewsByHomeId(params.id);
+    if (!reviewResponse.ok)
+      return error({
+        statusCode: reviewResponse.status,
+        message: reviewResponse.statusText,
       });
 
     return {
-      home: response.json,
+      home: homeResponse.json,
+      reviews: reviewResponse.json.hits,
     };
+  },
+  methods: {
+    formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString(undefined, {
+        month: "long",
+        year: "numeric",
+      });
+    },
   },
 };
 </script>
